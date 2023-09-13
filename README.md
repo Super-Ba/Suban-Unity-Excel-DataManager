@@ -38,6 +38,8 @@ json 배열의 0 번에는 데이터에 포함된 key 들 목록을 저장하고
 
 앞에 `#`이 들어간 key는 json 내용에 추가하지 않음
 
+<br>
+
 ## 데이터 매니저
 
 게임 데이터들을 저장하고 관리하는 `IGameDataBase`와
@@ -117,7 +119,7 @@ json 배열의 0 번에는 데이터에 포함된 key 들 목록을 저장하고
 
 <br>
 
-`IGameData` 와 `IGameDataBase` 를 정의
+### `IGameData` 와 `IGameDataBase` 를 정의
 
 ```c#
 public class TestGameData : IGameData
@@ -157,7 +159,7 @@ public class TestGameDataBase : IGameDataBase
 
 <br>
 
-사용 방법
+### 사용 방법
 
 ```c#
 var dataManager = new GameDataManager();
@@ -172,4 +174,16 @@ Debug.Log(data.Bool);
 Debug.Log(data.Enum);
 ```
 
+<br>
+<br>
+
+## 설치 방법
+
+![image](https://github.com/Super-Ba/SubanDataManager/assets/96484044/b036266b-21bf-431f-9c3a-b236255568b7)
+![image](https://github.com/Super-Ba/SubanDataManager/assets/96484044/540708ee-32f9-49b3-bf92-891564dd09d2)
+
+유니티 패키지 매니저에서
+
+`Add package from git URL` 선택 후 
+ `https://github.com/Super-Ba/SubanDataManager.git` 입력
 
