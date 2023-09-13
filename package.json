@@ -1,0 +1,23 @@
+{
+  "name": "com.suban.datamanager",
+  "version": "1.0.0",
+  "displayName": "Suban DataManager",
+  "description": "excel to json, json to runtime game data",
+  "documentationUrl": "https://github.com/Super-Ba",
+  "changelogUrl": "https://github.com/Super-Ba",
+  "licensesUrl": "https://github.com/Super-Ba",
+  "dependencies": {
+    "com.unity.addressables": "1.21.17",
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  },
+  "keywords": [
+    "Excel",
+    "Json",
+    "Data"
+  ],
+  "author": {
+    "name": "Suban",
+    "email": "stuban175@gmail.com",
+    "url": "https://github.com/Super-Ba"
+  }
+}
