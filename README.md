@@ -188,7 +188,15 @@ Debug.Log(data.Enum);
 유니티 패키지 매니저에서
 
 `Add package from git URL` 선택 후 
- `https://github.com/Super-Ba/Suban_UnityExcelDataManager.git` 입력
+ `https://github.com/Super-Ba/Suban-Unity-Excel-DataManager.git` 입력
+
+<br>
+
+## 레퍼런스
+
+- 엑셀 파일을 읽기 위해  ([NPOI](https://github.com/dotnetcore/NPOI)) 라이브러리를 사용합니다
+- Json 파일을 읽기 위해 ([NewtonsoftJson](https://www.newtonsoft.com/json)) 과 유니티의 ([Addressables](https://docs.unity3d.com/Packages/com.unity.addressables@0.8/manual/index.html)) 를 사용합니다.
+- 데이터 등록 과정 최적화를 위해 ([UniTask](https://github.com/Cysharp/UniTask)) 를 사용합니다.
 
 <br>
 
@@ -196,4 +204,4 @@ Debug.Log(data.Enum);
 
 MIT 라이선스를 따릅니다
 
-Apache License 2.0. 로 배포되는 라이브러리가 포함되어 있습니다. ([dotnetcore/NPOI](https://github.com/dotnetcore/NPOI))
+Apache License 2.0. 로 배포되는 라이브러리가 포함되어 있습니다. ([NPOI](https://github.com/dotnetcore/NPOI))
