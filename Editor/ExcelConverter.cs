@@ -31,6 +31,12 @@ namespace Suban.DataManager
                     return;
                 }
                 
+                path = new DirectoryInfo(JsonDataPath);
+                if (!path.Exists)
+                {
+                    path.Create();
+                }
+                
                 var stopWatch = new Stopwatch();
                 
                 var files = Directory.GetFiles(GameDataPath, "*.xls*");
