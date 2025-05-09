@@ -8,7 +8,8 @@
   "licensesUrl": "https://github.com/Super-Ba",
   "dependencies": {
     "com.unity.addressables": "1.21.17",
-    "com.unity.nuget.newtonsoft-json": "3.2.1"
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
   },
   "keywords": [
     "Excel",
