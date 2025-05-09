@@ -61,7 +61,7 @@ json 배열의 0 번에는 데이터에 포함된 key 들 목록을 저장하고
         필드의 타입에 맞게 데이터를 파싱하여 저장
     - 이때 `IGameData` 필드의 이름과 데이터의 Column 이름이 동일해야 하며
       `IGameData` 필드의 자료형을 찾아 파싱함
-    - 파싱 가능한 타입은 `string`, `int`, `float`, `bool`, `Enum`(Flags)
+    - 파싱 가능한 타입은 `string`, `int`, `byte`, `float`, `bool`, `Enum`(Flags)
 
 
 <br>
@@ -102,7 +102,7 @@ json 배열의 0 번에는 데이터에 포함된 key 들 목록을 저장하고
 
 <br>
 
-### `IGameData` 와 `IGameDataBase` 를 정의
+### `IGameData` 와 `GameDataBase` 를 정의
 
 ```c#
 public class TestGameData : IGameData
@@ -123,15 +123,30 @@ public class TestGameData : IGameData
 
 
 [GameDataBaseAttribute(typeof(TestGameData), "TestGameData")]
-public class TestGameDataBase : IGameDataBase
+public class TestGameDataBase : GameDataBase
 {
-    public Dictionary<int, IGameData> datas { get; set; }
+    public Dictionary<int, TestGameData> _data;
+
+    public TestGameDataBase(int capacity)
+    {
+        _data = new(capacity);
+    }
+
+    public override void RegisterData(IGameData data)
+    {
+        _data[data.Index] = data as TestGameData;
+    }
+
+    public override void OnInitialize(GameDataManager manager)
+    {
+
+    }
 
     public TestGameData GetData(int id)
     {
         if (datas.TryGetValue(id, out var value))
         {
-            return (TestGameData)value;
+            return value;
         }
 
         return null;
