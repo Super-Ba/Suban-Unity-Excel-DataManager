@@ -43,7 +43,7 @@ namespace Suban.DataManager
 
         private void OnGUI()
         {
-            if (GUILayout.Button("새로고침")) SetDataInfos();
+            if (GUILayout.Button("Refresh")) SetDataInfos();
 
             if (_infos != null)
             {
@@ -86,7 +86,7 @@ namespace Suban.DataManager
             if (info.JsonNotFound)
             {
                 errorStyle.normal.textColor = Color.red;
-                GUILayout.Label("Json 파일 없음", errorStyle, GUILayout.ExpandWidth(false));
+                GUILayout.Label("No Json file", errorStyle, GUILayout.ExpandWidth(false));
             }
             else if(info.NotMatch > 0)
             {
@@ -122,8 +122,8 @@ namespace Suban.DataManager
 
         private void SetDataInfos()
         {
-            var dataBaseTypes = Assembly.GetAssembly(typeof(IGameDataBase)).GetTypes().Where(t =>
-                typeof(IGameDataBase) != t && typeof(IGameDataBase).IsAssignableFrom(t));
+            var dataBaseTypes = Assembly.GetAssembly(typeof(GameDataBase)).GetTypes().Where(t =>
+                typeof(GameDataBase) != t && typeof(GameDataBase).IsAssignableFrom(t));
 
             _infos = new List<DataInfo>(dataBaseTypes.Count());
 

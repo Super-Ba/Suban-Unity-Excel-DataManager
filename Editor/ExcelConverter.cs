@@ -24,8 +24,15 @@ namespace Suban.DataManager
         {
             try
             {
+                var path = new DirectoryInfo(GameDataPath);
+                if (!path.Exists)
+                {
+                    path.Create();
+                    return;
+                }
+                
                 var stopWatch = new Stopwatch();
-
+                
                 var files = Directory.GetFiles(GameDataPath, "*.xls*");
                 foreach (var file in files)
                 {
@@ -137,6 +144,13 @@ namespace Suban.DataManager
                         continue;
                     }
 
+                    // #으로 시작하는 row 걸러내기
+                    var firstCell = GetCellString(row.GetCell(0));
+                    if (!string.IsNullOrWhiteSpace(firstCell) && firstCell[0] == '#')
+                    {
+                        continue;
+                    }
+                    
                     for (var cellNum = 0; cellNum < columns.Count; cellNum++)
                     {
                         if (string.IsNullOrEmpty(columns[cellNum]))
@@ -148,12 +162,6 @@ namespace Suban.DataManager
                         
                         if (!string.IsNullOrWhiteSpace(data))
                         {
-                            // #으로 시작하는 row 걸러내기
-                            if (datas.Count == 0 && data[0] == '#')
-                            {
-                                break;
-                            }
-                            
                             datas.Add(columns[cellNum], data);
                         }
 

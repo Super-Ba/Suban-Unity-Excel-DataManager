@@ -13,7 +13,7 @@ namespace Suban.DataManager
     {
         public int Index { get; }
     }
-
+    
     [AttributeUsage(AttributeTargets.Class)]
     public class GameDataBaseAttribute : Attribute
     {
@@ -27,9 +27,15 @@ namespace Suban.DataManager
         }
     }
 
-    public interface IGameDataBase
+    public abstract class GameDataBase
     {
-        public void RegisterData(IGameData data);
+        public abstract void RegisterData(IGameData data);
+        public abstract void OnInitialize(GameDataManager manager);
+
+        public GameDataBase(int capacity)
+        {
+            
+        }
     }
 
 
@@ -38,15 +44,15 @@ namespace Suban.DataManager
         public bool IsInitialized { get; private set; } = false;
         private const string JsonPath = "GameData/";
 
-        private Dictionary<Type, IGameDataBase> _databases;
+        private Dictionary<Type, GameDataBase> _databases;
 
-        public void Initialize()
+        public async UniTask Initialize()
         {
-            _databases = new Dictionary<Type, IGameDataBase>();
+            _databases = new Dictionary<Type, GameDataBase>();
 
             try
             {
-                ParseGameData();
+               await ParseGameData();
             }
             catch (Exception e)
             {
@@ -55,12 +61,12 @@ namespace Suban.DataManager
         }
 
 
-        private async UniTaskVoid ParseGameData()
+        private async UniTask ParseGameData()
         {
             var dataBaseTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t =>
-                typeof(IGameDataBase) != t && typeof(IGameDataBase).IsAssignableFrom(t));
+                typeof(GameDataBase) != t && typeof(GameDataBase).IsAssignableFrom(t));
 
-            List<UniTask<(Type, IGameDataBase)>> tasks = new(dataBaseTypes.Count());
+            List<UniTask<(Type, GameDataBase)>> tasks = new(dataBaseTypes.Count());
 
             foreach (var dataBaseType in dataBaseTypes)
             {
@@ -82,6 +88,11 @@ namespace Suban.DataManager
             {
                 _databases.Add(database.Item1, database.Item2);
             }
+            
+            foreach (var database in _databases)
+            {
+                database.Value.OnInitialize(this);
+            }
 
             IsInitialized = true;
         }
@@ -90,40 +101,40 @@ namespace Suban.DataManager
         {
             var json = await Addressables.LoadAssetAsync<TextAsset>(JsonPath + attribute.JsonFileName + ".json");
             
-            if (json == null)
+            if (!json)
             {
-                Debug.LogError($"{attribute.GameDataType}과 매칭되는 json 파일을 찾을 수 없습니다. JsonFilePath : {JsonPath}/{attribute.JsonFileName}");
+                Debug.LogError($"No json files were found matching {attribute.GameDataType}. JsonFilePath : {JsonPath}/{attribute.JsonFileName}");
                 return null;
             }
 
             var result = JArray.Parse(json.text);
 
-            if (result == null || result.Count != 2)
+            if (result.Count != 2)
             {
-                Debug.LogError($"json파일의 형식에 문제가 있습니다. JsonFilePath : {JsonPath}/{attribute.JsonFileName}");
+                Debug.LogError($"I have a problem with json file. JsonFilePath : {JsonPath}/{attribute.JsonFileName}");
                 return null;
             }
 
             return result;
         }
 
-        private async UniTask<(Type, IGameDataBase)> SetDataBase(Type dataBaseType, GameDataBaseAttribute attribute, JArray jsonResult)
+        private async UniTask<(Type, GameDataBase)> SetDataBase(Type dataBaseType, GameDataBaseAttribute attribute, JArray jsonResult)
         {
-            var database = Activator.CreateInstance(dataBaseType) as IGameDataBase;
-
+            var database = Activator.CreateInstance(dataBaseType, jsonResult[1].Count()) as GameDataBase;
+            
             var gameDataTypes = new Dictionary<string, PropertyInfo>();
-            var propertyInfos = attribute.GameDataType.GetProperties();
+            var propertyInfos = attribute.GameDataType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             foreach (JToken gameData in jsonResult[0])
             {
-                var property = propertyInfos.FirstOrDefault(t => t.Name == gameData.ToString());
+                var property = propertyInfos.FirstOrDefault(t => t.CanWrite && t.Name == gameData.ToString());
 
                 if (property != null)
                 {
                     gameDataTypes.Add(gameData.ToString(), property);
                 }
             }
-                
+            
             foreach (JObject gameData in jsonResult[1])
             {
                 var data = Activator.CreateInstance(attribute.GameDataType) as IGameData;
@@ -140,7 +151,7 @@ namespace Suban.DataManager
                         }
                         else
                         {
-                            Debug.LogError($"{dataBaseType} : 지원되지 않는 형식의 변환입니다. Type : {type.Key} Value : {value}");
+                            Debug.LogError($"{dataBaseType} : Conversion of an unsupported type. Type : {type.Key} Value : {value}");
                         }
                     }
                 }
@@ -162,6 +173,13 @@ namespace Suban.DataManager
             if (type == typeof(int))
             {
                 if (int.TryParse(value, out var result))
+                {
+                    return result;
+                }
+            }
+            if (type == typeof(byte))
+            {
+                if (byte.TryParse(value, out var result))
                 {
                     return result;
                 }
@@ -189,9 +207,9 @@ namespace Suban.DataManager
         }
 
 
-        // 조리예
+        // Sample:
         // GameDataManager.GetDataBase<TestGameDataBase>().GetData(1).Desc;
-        public T GetDataBase<T>() where T : IGameDataBase
+        public T GetDataBase<T>() where T : GameDataBase
         {
             if (_databases.TryGetValue(typeof(T), out var dataBase))
             {

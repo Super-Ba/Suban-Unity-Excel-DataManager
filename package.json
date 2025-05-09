@@ -1,6 +1,6 @@
 {
   "name": "com.suban.datamanager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Suban DataManager",
   "description": "excel to json, json to runtime game data",
   "documentationUrl": "https://github.com/Super-Ba",
@@ -18,7 +18,7 @@
   ],
   "author": {
     "name": "Suban",
-    "email": "stuban175@gmail.com",
+    "email": "stubang.sh@gmail.com",
     "url": "https://github.com/Super-Ba"
   }
 }
